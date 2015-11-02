@@ -1,0 +1,35 @@
+E -> EE
+  -> E^E
+  -> E_E
+  -> E^E_E
+  -> E_E^E
+  -> E/E
+  -> (E)
+  -> {E}
+  -> l
+
+S -> E$
+E -> CONCAT | SUPER | SUB | SUPSUB | SUBSUP | DIV | PAR | AGRUP | ID
+
+DIV     -> E/E !!!!AMBIGUEDAD!!!!
+CONCAT  -> E E !!!!AMBIGUEDAD!!!!
+SUPER   -> E^NSI
+SUB     -> E_NSI
+SUPSUB  -> E^NSI_NSI
+SUBSUP  -> E_NSI^NSI
+PAR     -> (E)
+AGRUP   -> {E}
+ID      -> l
+
+NSI    -> (E)
+       -> {E}
+       -> ID
+
+EXPLICAR que si queres excribir mas de un ID en el exponente tenés q usar llaves o paréntesis por un tema de presedencia.
+
+
+
+a^15*25*(1+2)
+
+
+
