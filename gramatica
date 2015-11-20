@@ -1,3 +1,4 @@
+Gramática Original
 E -> EE
   -> E^E
   -> E_E
@@ -8,28 +9,22 @@ E -> EE
   -> {E}
   -> l
 
-
+Modificada para desambiguarla
 
 S           -> E$
-E           -> E / NODIV | NODIV
-NODIV       -> NODIV NODIVCONCAT | NODIVCONCAT
-NODIVCONCAT -> SI | NSI
+E           -> E / CONCAT | CONCAT
+CONCAT      -> CONCAT ELEMENTS | ELEMENTS
+ELEMENTS    -> INDEXES | NOINDEX
 
-SUPER       -> NSI^NSI
-SUB         -> NSI_NSI
-SUPSUB      -> NSI^NSI_NSI
-SUBSUP      -> NSI_NSI^NSI
-SI          -> SUPER | SUB | SUPSUB | SUBSUP
+SUPER       -> NOINDEX^NOINDEX
+SUB         -> NOINDEX_NOINDEX
+SUPSUB      -> NOINDEX^NOINDEX_NOINDEX
+SUBSUP      -> NOINDEX_NOINDEX^NOINDEX
+INDEXES     -> SUPER | SUB | SUPSUB | SUBSUP
 
+NOINDEX     -> PAR | GROUP | ID
 PAR         -> (E)
-AGRUP       -> {E}
+GROUP       -> {E}
 ID          -> l
-NSI         -> PAR | AGRUP | ID
 
 EXPLICAR que si queres excribir mas de un ID en el exponente tenés q usar llaves o paréntesis por un tema de presedencia.
-
-
-1 / 2 / 3
-
-E => E / NODIV => E / NODIV / NODIV => NODIV / NODIV / NODIV => NODIVCONCAT / NODIVCONCAT / NODIVCONCAT => NSI / NSI / NSI => 1 / 2 / 3
-
