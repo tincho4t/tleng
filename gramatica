@@ -8,28 +8,28 @@ E -> EE
   -> {E}
   -> l
 
-S -> E$
-E -> CONCAT | SUPER | SUB | SUPSUB | SUBSUP | DIV | PAR | AGRUP | ID
 
-DIV     -> E/E !!!!AMBIGUEDAD!!!!
-CONCAT  -> E E !!!!AMBIGUEDAD!!!!
-SUPER   -> E^NSI
-SUB     -> E_NSI
-SUPSUB  -> E^NSI_NSI
-SUBSUP  -> E_NSI^NSI
-PAR     -> (E)
-AGRUP   -> {E}
-ID      -> l
 
-NSI    -> (E)
-       -> {E}
-       -> ID
+S           -> E$
+E           -> E / NODIV | NODIV
+NODIV       -> NODIV NODIVCONCAT | NODIVCONCAT
+NODIVCONCAT -> SI | NSI
+
+SUPER       -> NSI^NSI
+SUB         -> NSI_NSI
+SUPSUB      -> NSI^NSI_NSI
+SUBSUP      -> NSI_NSI^NSI
+SI          -> SUPER | SUB | SUPSUB | SUBSUP
+
+PAR         -> (E)
+AGRUP       -> {E}
+ID          -> l
+NSI         -> PAR | AGRUP | ID
 
 EXPLICAR que si queres excribir mas de un ID en el exponente tenés q usar llaves o paréntesis por un tema de presedencia.
 
 
+1 / 2 / 3
 
-a^15*25*(1+2)
-
-
+E => E / NODIV => E / NODIV / NODIV => NODIV / NODIV / NODIV => NODIVCONCAT / NODIVCONCAT / NODIVCONCAT => NSI / NSI / NSI => 1 / 2 / 3
 
