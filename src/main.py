@@ -79,7 +79,7 @@ class MainNode(Node):
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-<g transform="translate(0, %.2f) " font-family="Courier">\n''' % (self.hup - self.y) + \
+<g transform="translate(10, %.2f) " font-family="Courier">\n''' % (10+ self.hup - self.y) + \
 			super(MainNode, self).toSvg() + \
 			'''</g></svg>'''
 
@@ -130,27 +130,6 @@ class ParenthesisNode(Node):
 		rPar = parStr % (scale, x + subNodeWidth, y, height / scale, ')')
 
 		return lPar + super(ParenthesisNode, self).toSvg() + rPar
-
-		'''
-
-		parStr = "<text x='0' y='0' font-size='%.2f' transform='translate(%.2f, %.2f) scale(1, %.2f)'>%s</text>\n"
-		#parStr = "<text x='0' y='0' font-size='%.2f' transform='translate(%.2f, %.2f) scale(%.2f, 1)'>%s</text>\n"
-		lPar = parStr % (scale, x, y, height / scale, '[')
-		#rPar = parStr % (scale, x + subNodeWidth, y+self.getLowerHeight() - 24, height / scale, ')')
-		rPar = parStr % (scale, x + subNodeWidth, y+0*self.getLowerHeight(), height / scale, ')')
-		rPar = parStr % (scale, x + subNodeWidth, y, height / scale, ')')
-
-		lineStr = "<line x1='%.2f' y1='%.2f' x2='%.2f' y2='%.2f' stroke-width='%.3f' stroke='black' />\n"
-		stroke = 0.03 * self.scale
-		lPar = (lineStr % (x, y-self.getUpperHeight(), x, y+self.getLowerHeight(), stroke))
-		lPar += (lineStr % (x+subNodeWidth, y-self.getUpperHeight(), x+subNodeWidth, y+self.getLowerHeight(), stroke))
-		lPar += (lineStr % (x, y, x+subNodeWidth, y, stroke))
-
-		if self.getLowerHeight() > 10:
-			lPar += "<text>" + str(self.getLowerHeight()/24) + "</text>"
-
-		return lPar + super(ParenthesisNode, self).toSvg() + rPar
-		'''
 
 class SubIndexNode(Node):
 	def __init__(self, rootNode, indexNode):
@@ -425,7 +404,7 @@ while True:
     	s = '(10+5/2)'
     	s = '1_2^{3_4^{5_6^7}}'
     	s = '(A^BC^D/E^F_G+H)-I'
-    	s = 'A+(B){G^{F_E}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{80/2}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}'
+    	s = 'A+(B){G^{(F^e_E/(2))}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}'
         #s = raw_input('calc > ')   # use input() on Python 3
     except EOFError:
         break
