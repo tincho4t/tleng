@@ -140,15 +140,12 @@ class SubIndexNode(Node):
 		wid = rootNode.getWidth() + indexNode.getWidth()
 		hlow, hupp = rootNode.getHeights()
 
-		hlow = max(indexNode.getHeight(), rootNode.getLowerHeight())
+		hlow += indexNode.getHeight()
 		super(SubIndexNode, self).__init__(wid, hlow, hupp)
-		#indexNode.movePosition(rx + rootNode.getWidth(), ry + indexNode.getUpperHeight())
-		#self.addNode(rootNode)
-		#self.addNode(indexNode)
 
 
 		#Mueve el nodo Index a la derecha y un poco mas abajo que Root
-		indexNode.movePosition(rootNode.getWidth(), indexNode.getUpperHeight())
+		indexNode.movePosition(rootNode.getWidth(), indexNode.getUpperHeight() + rootNode.getLowerHeight())
 		self.addNode(indexNode)								#Agrega el nodo Index
 		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
 		self.addNode(rootNode)								#Agrega el nodo Root
@@ -160,48 +157,44 @@ class SuperIndexNode(Node):
 		wid = rootNode.getWidth() + indexNode.getWidth()
 		hlow, hupp = rootNode.getHeights()
 
-		hupp = indexNode.getHeight() + rootNode.getUpperHeight() / 2
+		hupp += indexNode.getHeight()
 		super(SuperIndexNode, self).__init__(wid, hlow, hupp)
 		
 		#Mueve el nodo Index a la derecha y un poco mas arriba que Root
-		indexNode.movePosition(rootNode.getWidth(), -indexNode.getLowerHeight() - rootNode.getUpperHeight()/2)
+		indexNode.movePosition(rootNode.getWidth(), -indexNode.getLowerHeight() - rootNode.getUpperHeight())
 		self.addNode(indexNode)								#Agrega el nodo Index
 		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
 		self.addNode(rootNode)								#Agrega el nodo Root
-		#self.movePosition(0, hupp - rootNode.getUpperHeight()) 	#Mueve todo hacia abajo
 
 class SuperSubIndexNode(Node):
 	def __init__(self, rootNode, superNode, subNode):
 		superNode.scaleBy(0.7)
 		subNode.scaleBy(0.7)
 
-		rx, ry = rootNode.getPosition()
 		wid = rootNode.getWidth() + max(superNode.getWidth(), subNode.getWidth())
 		hlow, hupp = rootNode.getHeights()
-		hupp += superNode.getLowerHeight()
-		hlow += subNode.getUpperHeight()
-
+		hlow += subNode.getHeight()
+		hupp += superNode.getHeight()
 		super(SuperSubIndexNode, self).__init__(wid, hlow, hupp)
-		self.setPosition(rootNode.getPosition())
-		superNode.movePosition(rx + rootNode.getWidth(), ry - superNode.getLowerHeight())
-		subNode.movePosition(rx + rootNode.getWidth(), ry + subNode.getUpperHeight())
-		self.addNode(rootNode)
-		self.addNode(superNode)
-		self.addNode(subNode)
+
+		subNode.movePosition(rootNode.getWidth(), subNode.getUpperHeight() + rootNode.getLowerHeight())
+		superNode.movePosition(rootNode.getWidth(), -superNode.getLowerHeight() - rootNode.getUpperHeight())
+		self.addNode(subNode)								#Agrega el nodo Sub
+		self.addNode(superNode)								#Agrega el nodo Super
+		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
+		self.addNode(rootNode)	
 
 class DivideNode(Node):
 	def __init__(self, upperNode, lowerNode):
 		uwid = upperNode.getWidth()
 		lwid = lowerNode.getWidth()
 		if uwid > lwid:
-			lowerNode.movePosition((uwid - lwid) / 2, 0)
 			wid = uwid
 		else:
-			upperNode.movePosition((lwid - uwid) / 2, 0)
 			wid = lwid
-		space = LINE_SPACING * 0
-		hlow = lowerNode.getHeight() + space
-		hupp = upperNode.getHeight() + space
+		space = CHAR_HEIGHT * 2 #LINE_SPACING * 0
+		hlow = lowerNode.getHeight() + CHAR_HEIGHT * 0.28
+		hupp = upperNode.getHeight() + CHAR_HEIGHT * 0.28
 
 		lineNode = LineNode(wid)
 
@@ -214,11 +207,16 @@ class DivideNode(Node):
 		self.addNode(lineNode)
 		self.addNode(lowerNode)
 
-		upperNode.movePosition(0, -CHAR_HEIGHT)
 		lineNode.setPosition(upperNode.getPosition())				#Mueve la linea
-		lineNode.movePosition(0, .72*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
+		lineNode.movePosition(0, -.28*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
 		lowerNode.setPosition(upperNode.getPosition())
-		lowerNode.movePosition(0, 2*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
+		lowerNode.movePosition(0, lowerNode.getUpperHeight())	#Mueve el Nodo un poco mas abajo
+		upperNode.movePosition(0, -upperNode.getLowerHeight() -.28*CHAR_HEIGHT)
+
+		if uwid > lwid:
+			lowerNode.movePosition((uwid - lwid) / 2, 0)
+		else:
+			upperNode.movePosition((lwid - uwid) / 2, 0)
 
 
 		'''
@@ -416,7 +414,7 @@ while True:
     try:
     	s = '{a^5-c/b}-c'
     	s = '{a^{5^6}-c_{{k^9}}/b_i}-c'
-    	s = '{g^f-q^e-y+x/y}-{c^{g^{g^{g}}}}'
+    	s = '{G^{F_E}-Q_{E_D}-Y+X^K_J/Y}-(80/2)-{C^{G^{G^{G}}}/5}/8'
         #s = raw_input('calc > ')   # use input() on Python 3
     except EOFError:
         break

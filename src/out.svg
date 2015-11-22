@@ -2,21 +2,36 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-<g transform="translate(0, 210.00) " font-family="Courier">
-<text x='695.40' y='-118.26' font-size='34.30'>g</text>
-<text x='666.00' y='-91.80' font-size='49.00'>g</text>
-<text x='624.00' y='-54.00' font-size='70.00'>g</text>
-<text x='564.00' y='0.00' font-size='100.00'>c</text>
-<text x='504.00' y='0.00' font-size='100.00'>-</text>
-<text x='444.00' y='-100.00' font-size='100.00'>x</text>
-<text x='384.00' y='-100.00' font-size='100.00'>+</text>
-<text x='324.00' y='-100.00' font-size='100.00'>y</text>
-<text x='264.00' y='-100.00' font-size='100.00'>-</text>
-<text x='222.00' y='-154.00' font-size='70.00'>e</text>
-<text x='162.00' y='-100.00' font-size='100.00'>q</text>
-<text x='102.00' y='-100.00' font-size='100.00'>-</text>
-<text x='60.00' y='-154.00' font-size='70.00'>f</text>
-<text x='0.00' y='-100.00' font-size='100.00'>g</text>
-<line x1='0.00' y1='-28.00' x2='504.00' y2='-28.00' stroke-width='3.000' stroke='black' />
-<text x='0.00' y='100.00' font-size='100.00'>y</text>
+<g transform="translate(0, 522.00) " font-family="Courier">
+<text x='1076.20' y='-409.86' font-size='34.30'>G</text>
+<text x='1046.80' y='-363.80' font-size='49.00'>G</text>
+<text x='1004.80' y='-298.00' font-size='70.00'>G</text>
+<text x='944.80' y='-204.00' font-size='100.00'>C</text>
+<line x1='944.80' y1='-184.00' x2='1096.78' y2='-184.00' stroke-width='3.000' stroke='black' />
+<text x='990.79' y='-76.00' font-size='100.00'>5</text>
+<text x='884.80' y='-156.00' font-size='100.00'>-</text>
+<text x='714.80' y='-156.00' font-size='100.00' transform='translate(0, 0) scale(1, 256.00)'>(</text>
+<text x='774.80' y='-204.00' font-size='100.00'>0</text>
+<text x='714.80' y='-204.00' font-size='100.00'>8</text>
+<line x1='714.80' y1='-184.00' x2='834.80' y2='-184.00' stroke-width='3.000' stroke='black' />
+<text x='744.80' y='-76.00' font-size='100.00'>2</text>
+<text x='884.80' y='-156.00' font-size='100.00' transform='translate(0, 0) scale(1, 256.00)'>)</text>
+<text x='604.80' y='-156.00' font-size='100.00'>-</text>
+<text x='562.80' y='-247.00' font-size='70.00'>J</text>
+<text x='562.80' y='-417.00' font-size='70.00'>K</text>
+<text x='502.80' y='-323.00' font-size='100.00'>X</text>
+<text x='442.80' y='-323.00' font-size='100.00'>+</text>
+<text x='382.80' y='-323.00' font-size='100.00'>Y</text>
+<text x='322.80' y='-323.00' font-size='100.00'>-</text>
+<text x='293.40' y='-193.80' font-size='49.00'>D</text>
+<text x='251.40' y='-247.00' font-size='70.00'>E</text>
+<text x='191.40' y='-323.00' font-size='100.00'>Q</text>
+<text x='131.40' y='-323.00' font-size='100.00'>-</text>
+<text x='102.00' y='-412.80' font-size='49.00'>E</text>
+<text x='60.00' y='-466.00' font-size='70.00'>F</text>
+<text x='0.00' y='-323.00' font-size='100.00'>G</text>
+<line x1='0.00' y1='-184.00' x2='604.80' y2='-184.00' stroke-width='3.000' stroke='black' />
+<text x='272.40' y='-76.00' font-size='100.00'>Y</text>
+<line x1='0.00' y1='-28.00' x2='1096.78' y2='-28.00' stroke-width='3.000' stroke='black' />
+<text x='518.39' y='80.00' font-size='100.00'>8</text>
 </g></svg>
