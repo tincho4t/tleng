@@ -1,18 +1,23 @@
-CHAR_WIDTH = 0.6
-CHAR_UPPER_HEIGHT = 1
-CHAR_LOWER_HEIGHT = 0.2
-PARENTHESIS_WIDTH = 0.1
-PARENTHESIS_SPACING = 0.5
-LINE_SPACING = 0.05
+FONT_SIZE = 100
+CHAR_WIDTH = .6 * FONT_SIZE
+#CHAR_HEIGHT = 1.2 * FONT_SIZE
+#CHAR_UPPER_HEIGHT = .9 * FONT_SIZE
+#CHAR_LOWER_HEIGHT = .3 * FONT_SIZE
+CHAR_HEIGHT = 1.0 * FONT_SIZE
+CHAR_UPPER_HEIGHT = .8 * FONT_SIZE
+CHAR_LOWER_HEIGHT = .2 * FONT_SIZE
+PARENTHESIS_WIDTH = .1 * FONT_SIZE
+PARENTHESIS_SPACING = .5 * FONT_SIZE
+LINE_SPACING = .1 * FONT_SIZE
 
 class Node(object):
 	def __init__(self, wid, hlw, hup):
 		self.x = 0
 		self.y = 0
 		self.wid = wid
-		self.hup = hup
 		self.hlw = hlw
-		self.scale = 1
+		self.hup = hup
+		self.scale = FONT_SIZE
 		self.subNodes = []
 
 	def getPosition(self):
@@ -36,6 +41,12 @@ class Node(object):
 	def getScale(self):
 		return self.scale
 
+	def setPosition(self, position):
+		nx, ny = position
+		dx = nx - self.x
+		dy = ny - self.y
+		self.movePosition(dx, dy)
+
 	def scaleBy(self, scale):
 		self.scale *= scale
 		self.x *= scale
@@ -55,6 +66,11 @@ class Node(object):
 	def addNode(self, node):
 		self.subNodes.append(node)
 
+	def getTopY(self):
+		top = -self.hup + self.y
+		for node in self.subNodes:
+			top = min(top, node.getTopY())
+		return top
 	def toSvg(self):
 		return "".join([node.toSvg() for node in self.subNodes])
 
@@ -70,14 +86,13 @@ class MainNode(Node):
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-<g transform="translate(0, 50) scale(50)" font-family=
-"Courier">''' + \
+<g transform="translate(0, %.2f) " font-family="Courier">\n''' % (- self.getTopY()) + \
 			super(MainNode, self).toSvg() + \
 			'''</g></svg>'''
 
 class CharacterNode(Node):
 	def __init__(self, char):
-		super(CharacterNode, self).__init__(CHAR_WIDTH, CHAR_UPPER_HEIGHT, CHAR_LOWER_HEIGHT)
+		super(CharacterNode, self).__init__(CHAR_WIDTH, CHAR_LOWER_HEIGHT, CHAR_UPPER_HEIGHT)
 		self.char = char
 
 	def toSvg(self):
@@ -89,12 +104,13 @@ class ConcatNode(Node):
 		wid = nodeA.getWidth() + nodeB.getWidth()
 		hlowA, huppA = nodeA.getHeights()
 		hlowB, huppB = nodeB.getHeights()
-		ax, ay = nodeA.getPosition()
 
 		super(ConcatNode, self).__init__(wid, max(hlowA, hlowB), max(huppA, huppB))
-		nodeB.movePosition(ax + nodeA.getWidth(), ay)
+		self.addNode(nodeB)						#Agrega el 2do nodo
+		self.setPosition(nodeA.getPosition())	#Mueve el nodo y B a la pos. de A
+		nodeB.movePosition(nodeA.getWidth(), 0)	#Desplaza B.x por A.width()
+
 		self.addNode(nodeA)
-		self.addNode(nodeB)
 
 class ParenthesisNode(Node):
 	def __init__(self, subNode):
@@ -103,6 +119,7 @@ class ParenthesisNode(Node):
 
 		super(ParenthesisNode, self).__init__(wid, hlow, hupp)
 		subNode.movePosition(PARENTHESIS_SPACING, 0)
+		self.setPosition(subNode.getPosition())
 		self.addNode(subNode)
 
 	def toSvg(self):
@@ -120,29 +137,38 @@ class SubIndexNode(Node):
 	def __init__(self, rootNode, indexNode):
 		indexNode.scaleBy(0.7)
 
-		rx, ry = rootNode.getPosition()
 		wid = rootNode.getWidth() + indexNode.getWidth()
 		hlow, hupp = rootNode.getHeights()
-		hlow += indexNode.getHeight()
 
+		hlow = max(indexNode.getHeight(), rootNode.getLowerHeight())
 		super(SubIndexNode, self).__init__(wid, hlow, hupp)
-		indexNode.movePosition(rx + rootNode.getWidth(), ry + indexNode.getUpperHeight())
-		self.addNode(rootNode)
-		self.addNode(indexNode)
+		#indexNode.movePosition(rx + rootNode.getWidth(), ry + indexNode.getUpperHeight())
+		#self.addNode(rootNode)
+		#self.addNode(indexNode)
+
+
+		#Mueve el nodo Index a la derecha y un poco mas abajo que Root
+		indexNode.movePosition(rootNode.getWidth(), indexNode.getUpperHeight())
+		self.addNode(indexNode)								#Agrega el nodo Index
+		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
+		self.addNode(rootNode)								#Agrega el nodo Root
 
 class SuperIndexNode(Node):
 	def __init__(self, rootNode, indexNode):
 		indexNode.scaleBy(0.7)
 
-		rx, ry = rootNode.getPosition()
 		wid = rootNode.getWidth() + indexNode.getWidth()
 		hlow, hupp = rootNode.getHeights()
-		hupp += indexNode.getHeight()
 
+		hupp = indexNode.getHeight() + rootNode.getUpperHeight() / 2
 		super(SuperIndexNode, self).__init__(wid, hlow, hupp)
-		indexNode.movePosition(rx + rootNode.getWidth(), ry - indexNode.getLowerHeight())
-		self.addNode(rootNode)
-		self.addNode(indexNode)
+		
+		#Mueve el nodo Index a la derecha y un poco mas arriba que Root
+		indexNode.movePosition(rootNode.getWidth(), -indexNode.getLowerHeight() - rootNode.getUpperHeight()/2)
+		self.addNode(indexNode)								#Agrega el nodo Index
+		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
+		self.addNode(rootNode)								#Agrega el nodo Root
+		#self.movePosition(0, hupp - rootNode.getUpperHeight()) 	#Mueve todo hacia abajo
 
 class SuperSubIndexNode(Node):
 	def __init__(self, rootNode, superNode, subNode):
@@ -156,6 +182,7 @@ class SuperSubIndexNode(Node):
 		hlow += subNode.getUpperHeight()
 
 		super(SuperSubIndexNode, self).__init__(wid, hlow, hupp)
+		self.setPosition(rootNode.getPosition())
 		superNode.movePosition(rx + rootNode.getWidth(), ry - superNode.getLowerHeight())
 		subNode.movePosition(rx + rootNode.getWidth(), ry + subNode.getUpperHeight())
 		self.addNode(rootNode)
@@ -172,22 +199,50 @@ class DivideNode(Node):
 		else:
 			upperNode.movePosition((lwid - uwid) / 2, 0)
 			wid = lwid
-		hlow = lowerNode.getHeight()
-		hupp = upperNode.getHeight()
+		space = LINE_SPACING * 0
+		hlow = lowerNode.getHeight() + space
+		hupp = upperNode.getHeight() + space
 
-		lowerNode.movePosition(0, LINE_SPACING*2 + lowerNode.getLowerHeight())
+		lineNode = LineNode(wid)
+
 
 		super(DivideNode, self).__init__(wid, hlow, hupp)
+		self.setPosition(upperNode.getPosition())				#Mueve el Nodo a la posicion de Upper
+		#self.movePosition(0, CHAR_UPPER_HEIGHT - space)			#Lo mueve para centrar el proximo caracter
+		#self.movePosition(0, upperNode.getLowerHeight())	#Mueve el Nodo un poco mas abajo
 		self.addNode(upperNode)
+		self.addNode(lineNode)
 		self.addNode(lowerNode)
 
-		self.movePosition(0, upperNode.getUpperHeight())
+		upperNode.movePosition(0, -CHAR_HEIGHT)
+		lineNode.setPosition(upperNode.getPosition())				#Mueve la linea
+		lineNode.movePosition(0, .72*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
+		lowerNode.setPosition(upperNode.getPosition())
+		lowerNode.movePosition(0, 2*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
+
+
+		'''
+		upperNode.movePosition(0, -CHAR_HEIGHT)
+		#lowerNode.movePosition(0, hupp + space)						#Mueve Lower por debajo de la linea de division
+		#lowerNode.movePosition(0, CHAR_HEIGHT)
+		lineNode.setPosition(upperNode.getPosition())				#Mueve la linea
+		#lineNode.movePosition(0, upperNode.getLowerHeight()+space)	#Mueve el Nodo un poco mas abajo
+		lineNode.movePosition(0, .72*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
+		'''
+
+class LineNode(Node):
+	def __init__(self, wid):
+		super(LineNode, self).__init__(wid, LINE_SPACING, LINE_SPACING)
 
 	def toSvg(self):
 		x, y = self.getPosition()
 		wid = self.getWidth()
-		lineStr = "<line x1='%.2f' y1='%.2f' x2='%.2f' y2='%.2f' stroke-width='0.03' stroke='black' />\n"
-		return (lineStr % (x, y + LINE_SPACING, x + wid, y + LINE_SPACING)) + super(DivideNode, self).toSvg()
+		lineStr = "<line x1='%.2f' y1='%.2f' x2='%.2f' y2='%.2f' stroke-width='%.3f' stroke='black' />\n"
+		stroke = 0.03 * self.scale
+		#print(self.getHeights())
+		#print(self.subNodes[0].getHeights())
+		#print(self.subNodes[1].getHeights())
+		return (lineStr % (x, y, x + wid, y, stroke)) + super(LineNode, self).toSvg()
 
 
 
@@ -359,7 +414,10 @@ yacc.yacc()
 
 while True:
     try:
-        s = raw_input('calc > ')   # use input() on Python 3
+    	s = '{a^5-c/b}-c'
+    	s = '{a^{5^6}-c_{{k^9}}/b_i}-c'
+    	s = '{g^f-q^e-y+x/y}-{c^{g^{g^{g}}}}'
+        #s = raw_input('calc > ')   # use input() on Python 3
     except EOFError:
         break
     bald = yacc.parse(s)
@@ -369,6 +427,7 @@ while True:
 
     print("====")
     print(bald)
+    break
 
 """
 lexer = lex.lex()

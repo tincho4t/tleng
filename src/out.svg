@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+<g transform="translate(0, 210.00) " font-family="Courier">
+<text x='695.40' y='-118.26' font-size='34.30'>g</text>
+<text x='666.00' y='-91.80' font-size='49.00'>g</text>
+<text x='624.00' y='-54.00' font-size='70.00'>g</text>
+<text x='564.00' y='0.00' font-size='100.00'>c</text>
+<text x='504.00' y='0.00' font-size='100.00'>-</text>
+<text x='444.00' y='-100.00' font-size='100.00'>x</text>
+<text x='384.00' y='-100.00' font-size='100.00'>+</text>
+<text x='324.00' y='-100.00' font-size='100.00'>y</text>
+<text x='264.00' y='-100.00' font-size='100.00'>-</text>
+<text x='222.00' y='-154.00' font-size='70.00'>e</text>
+<text x='162.00' y='-100.00' font-size='100.00'>q</text>
+<text x='102.00' y='-100.00' font-size='100.00'>-</text>
+<text x='60.00' y='-154.00' font-size='70.00'>f</text>
+<text x='0.00' y='-100.00' font-size='100.00'>g</text>
+<line x1='0.00' y1='-28.00' x2='504.00' y2='-28.00' stroke-width='3.000' stroke='black' />
+<text x='0.00' y='100.00' font-size='100.00'>y</text>
+</g></svg>
