@@ -66,11 +66,6 @@ class Node(object):
 	def addNode(self, node):
 		self.subNodes.append(node)
 
-	def getTopY(self):
-		top = -self.hup + self.y
-		for node in self.subNodes:
-			top = min(top, node.getTopY())
-		return top
 	def toSvg(self):
 		return "".join([node.toSvg() for node in self.subNodes])
 
@@ -86,7 +81,7 @@ class MainNode(Node):
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-<g transform="translate(0, %.2f) " font-family="Courier">\n''' % (- self.getTopY()) + \
+<g transform="translate(0, %.2f) " font-family="Courier">\n''' % (self.hup - self.y) + \
 			super(MainNode, self).toSvg() + \
 			'''</g></svg>'''
 
@@ -118,8 +113,8 @@ class ParenthesisNode(Node):
 		hlow, hupp = subNode.getHeights()
 
 		super(ParenthesisNode, self).__init__(wid, hlow, hupp)
-		subNode.movePosition(PARENTHESIS_SPACING, 0)
 		self.setPosition(subNode.getPosition())
+		subNode.movePosition(PARENTHESIS_SPACING, 0)
 		self.addNode(subNode)
 
 	def toSvg(self):
@@ -129,8 +124,8 @@ class ParenthesisNode(Node):
 		subNodeWidth = self.getWidth() - PARENTHESIS_SPACING
 
 		parStr = "<text x='%.2f' y='%.2f' font-size='%.2f' transform='translate(0, 0) scale(1, %.2f)'>%s</text>\n"
-		lPar = parStr % (x, y, scale, height, '(')
-		rPar = parStr % (x + subNodeWidth, y, scale, height, ')')
+		lPar = parStr % (x, y, scale, height / scale, '(')
+		rPar = parStr % (x + subNodeWidth, y, scale, height / scale, ')')
 		return lPar + super(ParenthesisNode, self).toSvg() + rPar
 
 class SubIndexNode(Node):
@@ -415,6 +410,7 @@ while True:
     	s = '{a^5-c/b}-c'
     	s = '{a^{5^6}-c_{{k^9}}/b_i}-c'
     	s = '{G^{F_E}-Q_{E_D}-Y+X^K_J/Y}-(80/2)-{C^{G^{G^{G}}}/5}/8'
+    	s = '(10+5/2)'
         #s = raw_input('calc > ')   # use input() on Python 3
     except EOFError:
         break
