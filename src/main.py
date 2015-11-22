@@ -1,14 +1,12 @@
-FONT_SIZE = 100
+FONT_SIZE = 48
 CHAR_WIDTH = .6 * FONT_SIZE
-#CHAR_HEIGHT = 1.2 * FONT_SIZE
-#CHAR_UPPER_HEIGHT = .9 * FONT_SIZE
-#CHAR_LOWER_HEIGHT = .3 * FONT_SIZE
 CHAR_HEIGHT = 1.0 * FONT_SIZE
 CHAR_UPPER_HEIGHT = .8 * FONT_SIZE
 CHAR_LOWER_HEIGHT = .2 * FONT_SIZE
-PARENTHESIS_WIDTH = .1 * FONT_SIZE
 PARENTHESIS_SPACING = .5 * FONT_SIZE
 LINE_SPACING = .1 * FONT_SIZE
+SUPER_SPACING = -0.5 * CHAR_UPPER_HEIGHT
+SUB_SPACING = -0.5 * CHAR_UPPER_HEIGHT
 
 class Node(object):
 	def __init__(self, wid, hlw, hup):
@@ -101,11 +99,12 @@ class ConcatNode(Node):
 		hlowB, huppB = nodeB.getHeights()
 
 		super(ConcatNode, self).__init__(wid, max(hlowA, hlowB), max(huppA, huppB))
+		self.setPosition(nodeA.getPosition())	#Mueve el nodo
+		self.addNode(nodeA)						#Agrega el 1er nodo
 		self.addNode(nodeB)						#Agrega el 2do nodo
-		self.setPosition(nodeA.getPosition())	#Mueve el nodo y B a la pos. de A
-		nodeB.movePosition(nodeA.getWidth(), 0)	#Desplaza B.x por A.width()
 
-		self.addNode(nodeA)
+		nodeB.setPosition(nodeA.getPosition())	#Mueve el nodo y B a la pos. de A
+		nodeB.movePosition(nodeA.getWidth(), 0)	#Desplaza B.x por A.width()
 
 class ParenthesisNode(Node):
 	def __init__(self, subNode):
@@ -120,13 +119,38 @@ class ParenthesisNode(Node):
 	def toSvg(self):
 		x, y = self.getPosition()
 		scale = self.getScale()
-		height = self.getHeight()
+		height = self.getHeight() / .74
 		subNodeWidth = self.getWidth() - PARENTHESIS_SPACING
 
-		parStr = "<text x='%.2f' y='%.2f' font-size='%.2f' transform='translate(0, 0) scale(1, %.2f)'>%s</text>\n"
-		lPar = parStr % (x, y, scale, height / scale, '(')
-		rPar = parStr % (x + subNodeWidth, y, scale, height / scale, ')')
+		y += self.getLowerHeight()
+		y -= (0.12 * FONT_SIZE) * height / scale
+
+		parStr = "<text x='0' y='0' font-size='%.2f' transform='translate(%.2f, %.2f) scale(1, %.2f)'>%s</text>\n"
+		lPar = parStr % (scale, x, y, height / scale, '(')
+		rPar = parStr % (scale, x + subNodeWidth, y, height / scale, ')')
+
 		return lPar + super(ParenthesisNode, self).toSvg() + rPar
+
+		'''
+
+		parStr = "<text x='0' y='0' font-size='%.2f' transform='translate(%.2f, %.2f) scale(1, %.2f)'>%s</text>\n"
+		#parStr = "<text x='0' y='0' font-size='%.2f' transform='translate(%.2f, %.2f) scale(%.2f, 1)'>%s</text>\n"
+		lPar = parStr % (scale, x, y, height / scale, '[')
+		#rPar = parStr % (scale, x + subNodeWidth, y+self.getLowerHeight() - 24, height / scale, ')')
+		rPar = parStr % (scale, x + subNodeWidth, y+0*self.getLowerHeight(), height / scale, ')')
+		rPar = parStr % (scale, x + subNodeWidth, y, height / scale, ')')
+
+		lineStr = "<line x1='%.2f' y1='%.2f' x2='%.2f' y2='%.2f' stroke-width='%.3f' stroke='black' />\n"
+		stroke = 0.03 * self.scale
+		lPar = (lineStr % (x, y-self.getUpperHeight(), x, y+self.getLowerHeight(), stroke))
+		lPar += (lineStr % (x+subNodeWidth, y-self.getUpperHeight(), x+subNodeWidth, y+self.getLowerHeight(), stroke))
+		lPar += (lineStr % (x, y, x+subNodeWidth, y, stroke))
+
+		if self.getLowerHeight() > 10:
+			lPar += "<text>" + str(self.getLowerHeight()/24) + "</text>"
+
+		return lPar + super(ParenthesisNode, self).toSvg() + rPar
+		'''
 
 class SubIndexNode(Node):
 	def __init__(self, rootNode, indexNode):
@@ -135,12 +159,12 @@ class SubIndexNode(Node):
 		wid = rootNode.getWidth() + indexNode.getWidth()
 		hlow, hupp = rootNode.getHeights()
 
-		hlow += indexNode.getHeight()
+		hlow += indexNode.getHeight() + SUB_SPACING
 		super(SubIndexNode, self).__init__(wid, hlow, hupp)
 
 
 		#Mueve el nodo Index a la derecha y un poco mas abajo que Root
-		indexNode.movePosition(rootNode.getWidth(), indexNode.getUpperHeight() + rootNode.getLowerHeight())
+		indexNode.movePosition(rootNode.getWidth(), indexNode.getUpperHeight() + rootNode.getLowerHeight() + SUB_SPACING)
 		self.addNode(indexNode)								#Agrega el nodo Index
 		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
 		self.addNode(rootNode)								#Agrega el nodo Root
@@ -152,11 +176,11 @@ class SuperIndexNode(Node):
 		wid = rootNode.getWidth() + indexNode.getWidth()
 		hlow, hupp = rootNode.getHeights()
 
-		hupp += indexNode.getHeight()
+		hupp += indexNode.getHeight() + SUPER_SPACING
 		super(SuperIndexNode, self).__init__(wid, hlow, hupp)
 		
 		#Mueve el nodo Index a la derecha y un poco mas arriba que Root
-		indexNode.movePosition(rootNode.getWidth(), -indexNode.getLowerHeight() - rootNode.getUpperHeight())
+		indexNode.movePosition(rootNode.getWidth(), -indexNode.getLowerHeight() - rootNode.getUpperHeight() - SUPER_SPACING)
 		self.addNode(indexNode)								#Agrega el nodo Index
 		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
 		self.addNode(rootNode)								#Agrega el nodo Root
@@ -168,12 +192,16 @@ class SuperSubIndexNode(Node):
 
 		wid = rootNode.getWidth() + max(superNode.getWidth(), subNode.getWidth())
 		hlow, hupp = rootNode.getHeights()
-		hlow += subNode.getHeight()
-		hupp += superNode.getHeight()
+		hlow += subNode.getHeight() + SUB_SPACING
+		hupp += superNode.getHeight() + SUPER_SPACING
 		super(SuperSubIndexNode, self).__init__(wid, hlow, hupp)
 
-		subNode.movePosition(rootNode.getWidth(), subNode.getUpperHeight() + rootNode.getLowerHeight())
-		superNode.movePosition(rootNode.getWidth(), -superNode.getLowerHeight() - rootNode.getUpperHeight())
+		#Mueve el Sub a la derecha y abajo del Root
+		subNode.movePosition(rootNode.getWidth(), subNode.getUpperHeight() + rootNode.getLowerHeight() + SUB_SPACING)
+		
+		#Mueve el Super a la derecha y arriba del Root
+		superNode.movePosition(rootNode.getWidth(), -superNode.getLowerHeight() - rootNode.getUpperHeight() - SUPER_SPACING)
+
 		self.addNode(subNode)								#Agrega el nodo Sub
 		self.addNode(superNode)								#Agrega el nodo Super
 		self.setPosition(rootNode.getPosition())			#Setea el nodo en la posicion de Root
@@ -187,41 +215,29 @@ class DivideNode(Node):
 			wid = uwid
 		else:
 			wid = lwid
-		space = CHAR_HEIGHT * 2 #LINE_SPACING * 0
 		hlow = lowerNode.getHeight() + CHAR_HEIGHT * 0.28
-		hupp = upperNode.getHeight() + CHAR_HEIGHT * 0.28
+		hupp = upperNode.getHeight() + CHAR_HEIGHT * 0.4
 
 		lineNode = LineNode(wid)
 
 
 		super(DivideNode, self).__init__(wid, hlow, hupp)
 		self.setPosition(upperNode.getPosition())				#Mueve el Nodo a la posicion de Upper
-		#self.movePosition(0, CHAR_UPPER_HEIGHT - space)			#Lo mueve para centrar el proximo caracter
-		#self.movePosition(0, upperNode.getLowerHeight())	#Mueve el Nodo un poco mas abajo
 		self.addNode(upperNode)
 		self.addNode(lineNode)
 		self.addNode(lowerNode)
 
-		lineNode.setPosition(upperNode.getPosition())				#Mueve la linea
-		lineNode.movePosition(0, -.28*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
-		lowerNode.setPosition(upperNode.getPosition())
-		lowerNode.movePosition(0, lowerNode.getUpperHeight())	#Mueve el Nodo un poco mas abajo
-		upperNode.movePosition(0, -upperNode.getLowerHeight() -.28*CHAR_HEIGHT)
+		lineNode.setPosition(upperNode.getPosition())				#Mueve la linea al Baseline
+		lineNode.movePosition(0, -.28*CHAR_HEIGHT)					#Mueve la linea un poco arriba para que quede alineada con los '-''
+		lowerNode.setPosition(upperNode.getPosition())				#Mueve Lower al Baseline
+		lowerNode.movePosition(0, lowerNode.getUpperHeight())		#Mueve Lower por debajo de la linea
+		upperNode.movePosition(0, -upperNode.getLowerHeight() -.4*CHAR_HEIGHT) #Mueve Upper por encima de la linea
 
 		if uwid > lwid:
 			lowerNode.movePosition((uwid - lwid) / 2, 0)
 		else:
 			upperNode.movePosition((lwid - uwid) / 2, 0)
 
-
-		'''
-		upperNode.movePosition(0, -CHAR_HEIGHT)
-		#lowerNode.movePosition(0, hupp + space)						#Mueve Lower por debajo de la linea de division
-		#lowerNode.movePosition(0, CHAR_HEIGHT)
-		lineNode.setPosition(upperNode.getPosition())				#Mueve la linea
-		#lineNode.movePosition(0, upperNode.getLowerHeight()+space)	#Mueve el Nodo un poco mas abajo
-		lineNode.movePosition(0, .72*CHAR_HEIGHT)	#Mueve el Nodo un poco mas abajo
-		'''
 
 class LineNode(Node):
 	def __init__(self, wid):
@@ -232,9 +248,6 @@ class LineNode(Node):
 		wid = self.getWidth()
 		lineStr = "<line x1='%.2f' y1='%.2f' x2='%.2f' y2='%.2f' stroke-width='%.3f' stroke='black' />\n"
 		stroke = 0.03 * self.scale
-		#print(self.getHeights())
-		#print(self.subNodes[0].getHeights())
-		#print(self.subNodes[1].getHeights())
 		return (lineStr % (x, y, x + wid, y, stroke)) + super(LineNode, self).toSvg()
 
 
@@ -409,8 +422,10 @@ while True:
     try:
     	s = '{a^5-c/b}-c'
     	s = '{a^{5^6}-c_{{k^9}}/b_i}-c'
-    	s = '{G^{F_E}-Q_{E_D}-Y+X^K_J/Y}-(80/2)-{C^{G^{G^{G}}}/5}/8'
     	s = '(10+5/2)'
+    	s = '1_2^{3_4^{5_6^7}}'
+    	s = '(A^BC^D/E^F_G+H)-I'
+    	s = 'A+(B){G^{F_E}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{80/2}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}'
         #s = raw_input('calc > ')   # use input() on Python 3
     except EOFError:
         break
