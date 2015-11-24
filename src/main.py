@@ -1,3 +1,5 @@
+import argparse
+
 from Node import MainNode
 from Node import DivideNode
 from Node import ConcatNode
@@ -178,14 +180,24 @@ def test_accpet(s):
 s = None # Setea la variable global para poder mostrar mas informacion del error de parseo
 test()
 
-try:
-    s = raw_input('Formula :> ')
-except EOFError:
-    pass
+# Parseo de la entrada
+parser = argparse.ArgumentParser(description='Conversor de formulas a SVG.')
+parser.add_argument('--formula', type=str, help='Formula en formato pseudo latex')
+parser.add_argument('--output', type=str, help='nombre del archivo donde se guardara el resultado')
+args = parser.parse_args()
+
+if(args.formula):
+    s = args.formula
+else:
+    try:
+        s = raw_input('Formula :> ')
+    except EOFError:
+        pass
+
 bald = yacc.parse(s)
 
-with open('out.svg', 'w') as f:
-	f.write(bald)
-
-print("====")
-print(bald)
+if(args.output):
+    with open(args.output, 'w') as f:
+    	f.write(bald)
+else:
+    print(bald)
