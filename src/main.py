@@ -160,8 +160,9 @@ def test():
     assert test_accpet('(A^BC^D/E^F_G+H)-I')
     assert test_accpet('A+(B){G^{(F^e_E/(2))}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}')
     assert test_not_accept('1^2^3')
+    assert test_not_accept('1 2 3')
         
-
+		
 def test_not_accept(s):
     success = True
     try:
