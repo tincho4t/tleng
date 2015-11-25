@@ -1,4 +1,17 @@
 \section{Manual de uso}
 En esta sección veremos los requerimientos para correr el programa y como utilizarlo. Los requerimientos son:
 
+\begin{itemize}
+  \item Python
+  \item ply-3.8
+  \item Algún visor de svg para poder visualizar el output
+\end{itemize}
 
+El programa se puede correr de distintas formas:
+
+\begin{itemize}
+  \item Completamente interactivo: Tanto el input como el output es dentro del programa. Para ello basta con ejecutarlo del siguiente modo: python main.py
+  \item Input por linea de comando: La fórmula se introducirá por linea de comandos pero el resultado se verá por pantalla. Para esto ejecutarlo: python main.py $--$formula FORMULA donde FORMULA es la fórmula que se desee convertir.
+  \item Output por file: La fórmula se introduce dentro del programa pero el output se especifica por linea de comandos: python main.py $--$output FILENAME ejemplo: python main.py $--$output salida.svg
+  \item Linea de comanda: El input y el output se especifica en el comando para esto: python main.py $--$formula FORMULA $--$output FILENAME
+\end{itemize}
