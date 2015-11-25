@@ -7,7 +7,7 @@ La gramática se nos fue presentada fue la siguiente:\\
     & $|$ & E\_E \\
     & $|$ & E$\wedge$E\_E \\
     & $|$ & E\_E$\wedge$E \\
-    & $|$ & E\/E \\
+    & $|$ & E$\slash$E \\
     & $|$ & (E) \\
     & $|$ & \{E\} \\
     & $|$ & l \\
@@ -16,14 +16,14 @@ La gramática se nos fue presentada fue la siguiente:\\
 Dado que dicha gramática tenia problemas de ambiguedad, los cuales preferimos evitar y que había ciertas restricciones del lenguaje que no estaban contempladas decidimos modificarla.
 A continuación presentamos la gramática y la explicación de porque representa el mismo lenguaje: \\
 
-Ahora el símbolo distiguido es $S$ el cuál deriba en $E$. Uno de los problemas que teníamos con la ambiguedad es que $E$ podía
+Ahora el símbolo distiguido es $S$ el cuál deriva en $E$. Uno de los problemas que teníamos con la ambiguedad es que $E$ podía
 ser cualquier tipo de expresión con lo cual decidimos darle una cierta jerarquía a cada expresión (aprovechando que la gramática lo solicitaba) y de este modo
 deshacernos de la ambiguedad.\\
 
 
 \begin{tabular}{ l c l }
     S &        $\rightarrow$ & E \\
-    E &        $\rightarrow$ & E \/ CONCAT $|$ CONCAT \\
+    E &        $\rightarrow$ & E $\slash$ CONCAT $|$ CONCAT \\
     CONCAT &   $\rightarrow$ & CONCAT ELEMENTS $|$ ELEMENTS \\
     ELEMENTS & $\rightarrow$ & INDEXES $|$ NOINDEX \\
 \end{tabular} \\
