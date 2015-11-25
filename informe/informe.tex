@@ -1,0 +1,66 @@
+\documentclass[10pt, a4paper,english,spanish]{article}
+
+% \usepackage{a4wide}
+\parindent = 0 pt
+\parskip = 11 pt
+\usepackage[width=15.5cm, left=3cm, top=2.5cm, height= 24.5cm]{geometry}
+%Margenes de la pagina.  otra opcion, usar \usepackage{a4wide}
+%\usepackage[paper=a4paper, left=0.8cm, right=0.8cm, bottom=1.3cm, top=0.9cm]{geometry}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+%este paquete permitcodebe incluir acentos.  Notar que espera un formato ANSI-blah de archivo.  Si en lugar de eso se tiene un utf8 (usual en los linux), entonces usar \usepackage[utf8]{inputenc}
+\usepackage[utf8]{inputenc}
+
+%Este paquete es para que algunos titulos (como Tabla de Contenidos) esten en castellano
+\usepackage[spanish]{babel}
+
+%El siguiente paquete permite escribir la caratula facilmente
+\usepackage{caratula}
+
+\usepackage{framed}
+
+\usepackage{graphicx}
+\usepackage{float}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+%\usepackage{algpseudocode}
+
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\nat}{\mathbb{N}}
+
+\newcommand{\revJ}[1]{{\color{red} #1}}
+
+%Datos para la caratula
+\materia{Teoría de Lenguajes}
+
+\titulo{Trabajo Pr\'actico}
+
+\integrante{Claverino, Daniel}{273/10}{dclave@gmail.com}
+\integrante{Conde, Fernando}{423/09}{ferconde87@hotmail.com}
+\integrante{Forte, Martín}{363/10}{martinforte@yahoo.com.ar}
+
+\begin{document}
+
+%esto construye la caractula
+\maketitle 
+
+\tableofcontents
+  \newpage
+
+\input{introduccion.tex}
+%  \newpage
+%\input{desarrollo.tex}
+%  \newpage
+%\input{resultados.tex}
+%  \newpage
+%\input{conclusiones.tex}
+%  \newpage
+%\input{apendices.tex}
+%  \newpage
+%\input{referencias.tex}
+ % \newpage
+
+\end{document}
