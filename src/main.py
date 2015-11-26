@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from Node import MainNode
 from Node import DivideNode
@@ -261,7 +262,7 @@ else:
 try:
     svg = yacc.parse(s)
 except SyntaxError as e:
-    print(e) # Si hay un error de parseo lo muestro por pantalla y termino
+    print >> sys.stderr, e # Si hay un error de parseo lo muestro por el standard error
     raise SystemExit
 
 if(args.output):
