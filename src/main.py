@@ -141,11 +141,16 @@ def p_group(p):
     p[0] = p[2]
 
 def p_error(p):
-    if(s): # Si esta seteada la variable global la uso para expresar mejor el error
-        error = "Error en el caracter '%s'. Cadena: '%s' '%s' '%s'" % (p.value, s[0:p.lineno], s[p.lineno], s[p.lineno+1:])
-    else:
-        error = "Error en el caracter '%s' en la posicion %d." % (p.value, p.lineno)
-    print error
+    if(p):
+        if(s): # Si esta seteada la variable global la uso para expresar mejor el error
+            if(len(s) > p.lineno+1):
+                error = "Error en el caracter '%s'. Contexto: '%s' '%s' '%s'" % (p.value, s[0:p.lineno], s[p.lineno], s[p.lineno+1:])
+            else:
+                error = "Error en el caracter '%s'. Contexto: '%s'" % (p.value, s[0:p.lineno])
+        else:
+            error = "Error en el caracter '%s' en la posicion %d." % (p.value, p.lineno)
+    else: # en algunos casos p no viene definido y no hay mucha mas informacion para mostrar
+        error = "Error de sintaxis."
     raise SyntaxError(error)
 
 import ply.yacc as yacc
@@ -153,14 +158,31 @@ yacc.yacc()
 
 def test():
     # Casos que tiene que tiene que reconocer
+    assert test_accpet('(a_5-c/b-1)-c')
     assert test_accpet('{a^5-c/b}-c')
     assert test_accpet('{a^{5^6}-c_{{k^9}}/b_i}-c')
     assert test_accpet('(10+5/2)')
     assert test_accpet('1_2^{3_4^{5_6^7}}')
     assert test_accpet('(A^BC^D/E^F_G+H)-I')
     assert test_accpet('A+(B){G^{(F^e_E/(2))}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}')
+    
     assert test_not_accept('1^2^3')
-    assert test_not_accept('1 2 3')
+    assert test_not_accept('1_2_3')
+    assert test_not_accept('_')
+    assert test_not_accept('_1')
+    assert test_not_accept('^')
+    assert test_not_accept('^1')
+    assert test_not_accept('1_')
+    assert test_not_accept('1/')
+    assert test_not_accept('1/^')
+    assert test_not_accept('{1+2')
+    assert test_not_accept('1+2}')
+    assert test_not_accept('(1+2')
+    assert test_not_accept('3(1+2')
+    assert test_not_accept('1+2)')
+    assert test_not_accept('()')
+    assert test_not_accept('())')
+    assert test_not_accept('{{1}')
         
 		
 def test_not_accept(s):
@@ -195,7 +217,11 @@ else:
     except EOFError:
         pass
 
-bald = yacc.parse(s)
+try:
+    bald = yacc.parse(s)
+except SyntaxError as e:
+    print(e) # Si hay un error de parseo lo muestro por pantalla y termino
+    raise SystemExit
 
 if(args.output):
     with open(args.output, 'w') as f:
