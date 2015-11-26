@@ -221,7 +221,7 @@ def test_accept(test):
 		return False
 	return True
 
-s = [] # Setea la variable global para poder mostrar mas informacion del error de parseo
+s = None # Setea la variable global para poder mostrar mas informacion del error de parseo
 test()
 
 

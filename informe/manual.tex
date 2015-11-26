@@ -1,17 +1,31 @@
 \section{Manual de uso}
-En esta sección veremos los requerimientos para correr el programa y como utilizarlo. Los requerimientos son:
+En esta secci\'on veremos los requerimientos para correr el programa y c\'omo utilizarlo. Los requerimientos son:
 
 \begin{itemize}
   \item Python 2.7
   \item ply-3.8
-  \item Algún visor de svg para poder visualizar el output
+  \item Alg\'un visor de SVG para poder visualizar el output
 \end{itemize}
 
 El programa se puede correr de distintas formas:
 
 \begin{itemize}
-  \item Completamente interactivo: Tanto el input como el output es dentro del programa. Para ello basta con ejecutarlo del siguiente modo: python main.py
-  \item Input por linea de comando: La fórmula se introducirá por linea de comandos pero el resultado se verá por pantalla. Para esto ejecutarlo: python main.py $--$formula FORMULA donde FORMULA es la fórmula que se desee convertir.
-  \item Output por file: La fórmula se introduce dentro del programa pero el output se especifica por linea de comandos: python main.py $--$output FILENAME ejemplo: python main.py $--$output salida.svg
-  \item Linea de comanda: El input y el output se especifica en el comando para esto: python main.py $--$formula FORMULA $--$output FILENAME
+  \item {
+  	\par Completamente interactivo:
+  	\par Tanto el input como el output es dentro del programa. Para ello basta con ejecutarlo del siguiente modo: \texttt{python main.py}
+  	}
+  \item {
+  	\par Input por l\'inea de comando:
+  	\par La f\'ormula se introducir\'a por linea de comandos pero el resultado se ver\'a por pantalla.
+  	\par Para esto ejecutar: \texttt{python main.py $--$formula ``FORMULA''} donde FORMULA es la f\'ormula que se desee convertir. Las comillas son opcionales a menos que hayan espacios en la f\'ormula.
+  }
+  \item {
+  	\par Output por file: 
+  	\par La f\'ormula se introduce dentro del programa pero el output se especifica por linea de comandos: \textsc{python main.py $--$output FILENAME} 
+  	\par Ejemplo: \texttt{python main.py $--$output salida.svg}
+  }
+  \item {
+  	\par L\'inea de comandos: 
+  	\par El input y el output se especifica en el comando para esto: \texttt{python main.py $--$formula ``FORMULA'' $--$output FILENAME}
+  }
 \end{itemize}

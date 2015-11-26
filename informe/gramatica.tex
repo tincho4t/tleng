@@ -1,5 +1,5 @@
 \section{Gramática}
-La gramática se nos fue presentada fue la siguiente:\\
+Las producciones de la gram\'atica que se nos fue presentada son de la forma:\\
 
 \begin{tabular}{ l c l }
     E & $\rightarrow$ & EE \\
@@ -13,12 +13,10 @@ La gramática se nos fue presentada fue la siguiente:\\
     & $|$ & l \\
 \end{tabular}
 
-Dado que dicha gramática tenia problemas de ambiguedad, los cuales preferimos evitar y que había ciertas restricciones del lenguaje que no estaban contempladas decidimos modificarla.
-A continuación presentamos la gramática y la explicación de porque representa el mismo lenguaje: \\
+Como dicha gram\'atica tiene problemas de ambig\"uedad y hay ciertas restricciones del lenguaje que no est\'an contempladas, decidimos modificarla.
+A continuaci\'on presentamos nuestra gram\'atica y la explicaci\'on de por qu\'e representa el mismo lenguaje: \\
 
-Ahora el símbolo distiguido es $S$ el cuál deriva en $E$. Uno de los problemas que teníamos con la ambiguedad es que $E$ podía
-ser cualquier tipo de expresión con lo cual decidimos darle una cierta jerarquía a cada expresión (aprovechando que la gramática lo solicitaba) y de este modo
-deshacernos de la ambiguedad.\\
+El s\'imbolo distiguido ahora es $S$, el cual deriva en $E$. Uno de los problemas que ten\'iamos con la ambiguedad es que $E$ pod\'ia ser cualquier tipo de expresi\'on, con lo cual decidimos darle una cierta jerarqu\'ia a cada expresi\'on (aprovechando que la gram\'atica lo solicitaba) y de este modo deshacernos de la ambiguedad.\\
 
 
 \begin{tabular}{ l c l }
@@ -27,12 +25,11 @@ deshacernos de la ambiguedad.\\
     CONCAT &   $\rightarrow$ & CONCAT ELEMENTS $|$ ELEMENTS \\
     ELEMENTS & $\rightarrow$ & INDEXES $|$ NOINDEX \\
 \end{tabular} \\
-$E$ puede convertirse en divisiones o bien pasar a ser una $CONCAT$enación recursiva de $ELEMENTS$ donde cada elemento de la concatenación
-puede ser una expresión que contiene $INDEXES$ o bien $NOINDEXES$.\\
+$E$ puede convertirse en divisiones o bien pasar a ser una $CONCAT$enaci\'on recursiva de $ELEMENTS$ donde cada elemento de la concatenaci\'on
+puede ser una expresi\'on que contiene $INDEXES$ o bien $NOINDEXES$.\\
 
-$INDEXES$, como su nombre lo indica, contiene todas las expresiones que tienen índices y cada expresión no puede
-estar formada por expresiones $INDEXES$ ya que los indices no son asociativos(por enunciado) y porque la concatenación
-de subíndices con superíndices genera ambiguedad con la expresión original E $\rightarrow$ E\_E$\wedge$E. \\
+$INDEXES$, como su nombre lo indica, contiene todas las expresiones que tienen \'indices. No pueden estar directamente formadas por expresiones $INDEXES$ ya que los indices no son asociativos (por enunciado) y porque la concatenaci\'on
+de sub\'indices con super\'indices generar\'ia ambiguedad, por ejemplo con la expresi\'on original E $\rightarrow$ E\_E$\wedge$E. \\
 
 
 \begin{tabular}{ l c l }
@@ -43,7 +40,7 @@ de subíndices con superíndices genera ambiguedad con la expresión original E 
     SUBSUP &   $\rightarrow$ & NOINDEX\_NOINDEX$\wedge$NOINDEX \\
 \end{tabular}\\
 
-$NOINDEX$ son todas aquellas expresiones que no son formadas por índices: $PAR$, $GROUP$ y $ID$. \\
+$NOINDEX$ son todas aquellas expresiones que no son formadas por \'indices: $ID$, $PAR$ y $GROUP$. \\
 
 
 \begin{tabular}{ l c l }
