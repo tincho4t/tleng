@@ -9,12 +9,43 @@
 \par Finalmente, en la producci\'on $S \rightarrow E$ simplemente completamos el \'arbol con la ra\'iz y llamamos al m\'etodo $toSvg()$ de \'esta. $p[0] = MainNode(p[1]).toSvg()$, donde $MainNode$ representa la ra\'iz del \'arbol y $toSvg()$ va generando y concatenando los $toSvg$ de los subnodos para obtener el svg final de la f\'ormula.
 
 \par \phantom{a}
-\par A continuaci\'on inclu\'imos el c\'odigo de \textbf{main.py} y \textbf{Node.py}:
+\par A continuaci\'on inclu\'imos unos ejemplos de resultados obtenidos y luego presentamos el c\'odigo de \textbf{main.py} y \textbf{Node.py}:
 
+\newpage
+\subsubsection{Ejemplos}
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \includegraphics[width=\textwidth]{imgs/test1}
+	  \caption{$(a \_ 5-c/b-1)-c$}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \includegraphics[width=\textwidth]{imgs/test2}
+	  \caption{$\{a \wedge \{5 \wedge 6\}-c \_ \{k \wedge 9\}/b \_ i\}-c$}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[b]{0.3\textwidth}
+	  \includegraphics[width=\textwidth]{imgs/test3}
+	  \caption{$(A \wedge BC \wedge D/E \wedge F \_ G+H)-I$}
+	\end{subfigure}
+	
+	\hfill
+	
+	\hfill
+	
+	\hfill
+	
+	\begin{subfigure}[b]{\textwidth}
+	  \includegraphics[width=\textwidth]{imgs/test4}
+	  \caption{$A+(B)\{G \wedge \{(F \wedge e \_ E/(2))\}-(Q \_ \{E \_ \{\{5\}+E \_ \{E \_ \{E \_ D\}\}\}\}-Y)+X \wedge K \_ J/Y\}-\{(80)/(2)\}-\{C \wedge \{G \wedge \{G \wedge \{G\}\}\}/5\}/(\{8+4+7\}+5/ee) \wedge \{-i\}$}
+	\end{subfigure}
+\end{figure}
+
+\newpage
 \subsection{main.py}
 \lstinputlisting{../src/main.py}
 
 \newpage
-
 \subsection{Node.py}
 \lstinputlisting{../src/Node.py}

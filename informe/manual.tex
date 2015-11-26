@@ -17,7 +17,7 @@ El programa se puede correr de distintas formas:
   \item {
   	\par Input por l\'inea de comando:
   	\par La f\'ormula se introducir\'a por linea de comandos pero el resultado se ver\'a por pantalla.
-  	\par Para esto ejecutar: \texttt{python main.py $--$formula ``FORMULA''} donde FORMULA es la f\'ormula que se desee convertir. Las comillas son opcionales a menos que hayan espacios en la f\'ormula.
+  	\par Para esto ejecutar: \texttt{python main.py $--$formula "FORMULA"} donde FORMULA es la f\'ormula que se desee convertir. Las comillas \textbf{no} son opcionales ya que el m\'odulo de Python con el que parametrizamos la entrada parece no comprender el s\'imbolo de los superindices.
   }
   \item {
   	\par Output por file: 
@@ -26,6 +26,6 @@ El programa se puede correr de distintas formas:
   }
   \item {
   	\par L\'inea de comandos: 
-  	\par El input y el output se especifica en el comando para esto: \texttt{python main.py $--$formula ``FORMULA'' $--$output FILENAME}
+  	\par El input y el output se especifica en el comando para esto: \texttt{python main.py $--$formula "FORMULA" $--$output FILENAME}
   }
 \end{itemize}

@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+<g transform="translate(10, 91.60) " font-family="Courier">
+<text x='0' y='0' font-size='48.00'             transform='translate(0.00, 38.24)             scale(1, 4.03)'>(</text>
+<text x='52.80' y='-25.92' font-size='33.60'>5</text>
+<text x='24.00' y='-43.20' font-size='48.00'>a</text>
+<text x='72.96' y='-43.20' font-size='48.00'>-</text>
+<text x='101.76' y='-43.20' font-size='48.00'>c</text>
+<line x1='24.00' y1='-13.44' x2='130.56' y2='-13.44'             stroke-width='1.440' stroke='black' />
+<text x='34.08' y='38.40' font-size='48.00'>b</text>
+<text x='62.88' y='38.40' font-size='48.00'>-</text>
+<text x='91.68' y='38.40' font-size='48.00'>1</text>
+<text x='0' y='0' font-size='48.00'             transform='translate(130.56, 38.24)             scale(1, 4.03)'>)</text>
+<text x='154.56' y='0.00' font-size='48.00'>-</text>
+<text x='183.36' y='0.00' font-size='48.00'>c</text>
+</g></svg>
