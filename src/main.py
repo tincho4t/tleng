@@ -9,6 +9,13 @@ from Node import SuperSubIndexNode
 from Node import CharacterNode
 from Node import ParenthesisNode
 
+
+#==========================================
+#
+# LEXER
+#
+#==========================================
+
 tokens = (
     'SUB',
     'SUPER',
@@ -49,11 +56,14 @@ lex.lex()
 
 
 
-precedence = (
-    ('left','SUB','SUPER'),
-    ('left','DIVIDE'),
-)
 
+
+
+#==========================================
+#
+# PARSER
+#
+#==========================================
 
 # S -> E
 def p_statement_expression(p):
@@ -156,15 +166,23 @@ def p_error(p):
 import ply.yacc as yacc
 yacc.yacc()
 
+
+
+#==========================================
+#
+# TESTS
+#
+#==========================================
+
 def test():
     # Casos que tiene que tiene que reconocer
-    assert test_accpet('(a_5-c/b-1)-c')
-    assert test_accpet('{a^5-c/b}-c')
-    assert test_accpet('{a^{5^6}-c_{{k^9}}/b_i}-c')
-    assert test_accpet('(10+5/2)')
-    assert test_accpet('1_2^{3_4^{5_6^7}}')
-    assert test_accpet('(A^BC^D/E^F_G+H)-I')
-    assert test_accpet('A+(B){G^{(F^e_E/(2))}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}')
+    assert test_accept('(a_5-c/b-1)-c')
+    assert test_accept('{a^5-c/b}-c')
+    assert test_accept('{a^{5^6}-c_{{k^9}}/b_i}-c')
+    assert test_accept('(10+5/2)')
+    assert test_accept('1_2^{3_4^{5_6^7}}')
+    assert test_accept('(A^BC^D/E^F_G+H)-I')
+    assert test_accept('A+(B){G^{(F^e_E/(2))}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}')
     
     assert test_not_accept('1^2^3')
     assert test_not_accept('1_2_3')
@@ -185,10 +203,10 @@ def test():
     assert test_not_accept('{{1}')
         
 		
-def test_not_accept(s):
+def test_not_accept(test):
     success = True
     try:
-        s = yacc.parse(s)
+        s = yacc.parse(test)
         success = False # Si no falla paso por aca
     except SyntaxError:
         pass
@@ -196,12 +214,24 @@ def test_not_accept(s):
 
 
 # Si no pincha es porque se parseo correctamente
-def test_accpet(s):
-    yacc.parse(s)
-    return True
+def test_accept(test):
+	try:
+		s = yacc.parse(test)
+	except SyntaxError:
+		return False
+	return True
 
-s = None # Setea la variable global para poder mostrar mas informacion del error de parseo
+s = [] # Setea la variable global para poder mostrar mas informacion del error de parseo
 test()
+
+
+
+
+#==========================================
+#
+# PROGRAMA
+#
+#==========================================
 
 # Parseo de la entrada
 parser = argparse.ArgumentParser(description='Conversor de formulas a SVG.')
@@ -218,13 +248,13 @@ else:
         pass
 
 try:
-    bald = yacc.parse(s)
+    svg = yacc.parse(s)
 except SyntaxError as e:
     print(e) # Si hay un error de parseo lo muestro por pantalla y termino
     raise SystemExit
 
 if(args.output):
     with open(args.output, 'w') as f:
-    	f.write(bald)
+    	f.write(svg)
 else:
-    print(bald)
+    print(svg)

@@ -2,3 +2,5 @@
 src/parsetab.py
 *.pyc
 informe/informe.pdf
+informe/informe.aux
+informe/informe.log

@@ -120,7 +120,12 @@ class ParenthesisNode(Node):
         x, y = self.getPosition()
         scale = self.getScale()
         height = self.getHeight() / .74
-        subNodeWidth = self.getWidth() - PARENTHESIS_SPACING
+        snx, _ = self.subNodes[0].getPosition() #Me fijo la posicion del subnodo
+
+        #subNodeWidth = self.getWidth() - PARENTHESIS_SPACING / scale
+        #Y le resto la posicion del parentesis para saber el spacing a la izquierda
+        #Sacandole al width total este spacing, queda la distancia al parentesis derecho
+        subNodeWidth = self.getWidth() - (snx - x)
 
         y += self.getLowerHeight()
         y -= (0.12 * FONT_SIZE) * height / scale
