@@ -1,17 +1,17 @@
-FONT_SIZE = 48
-CHAR_WIDTH = .6 * FONT_SIZE
-CHAR_HEIGHT = 1.0 * FONT_SIZE
-CHAR_UPPER_HEIGHT = .8 * FONT_SIZE
-CHAR_LOWER_HEIGHT = .2 * FONT_SIZE
-PARENTHESIS_SPACING = .5 * FONT_SIZE
-LINE_SPACING = .1 * FONT_SIZE
-SUPER_SPACING = -0.5 * CHAR_UPPER_HEIGHT
-SUB_SPACING = -0.5 * CHAR_UPPER_HEIGHT
+FONT_SIZE           = 48              #Tamanio por defecto
+CHAR_WIDTH          = .6 * FONT_SIZE  #Ancho de un caracter
+CHAR_HEIGHT         = 1.0 * FONT_SIZE #Alto de un caracter
+CHAR_UPPER_HEIGHT   = .8 * FONT_SIZE  #Alto sobre baseline
+CHAR_LOWER_HEIGHT   = .2 * FONT_SIZE  #Alto por debajo del baseline
+PARENTHESIS_SPACING = .5 * FONT_SIZE  #Espaciado del parentesis
+LINE_SPACING        = .1 * FONT_SIZE  #Espaciado de la linea
+SUPER_SPACING       = -0.5 * CHAR_UPPER_HEIGHT  #Espaciado (eje Y) superindice
+SUB_SPACING         = -0.5 * CHAR_UPPER_HEIGHT  #Espaciado (eje Y) subindice
 
 class Node(object):
     def __init__(self, wid, hlw, hup):
-        self.x = 0                  #Posicion absoluta
-        self.y = 0                  #Posicion absoluta
+        self.x = 0                  #Posicion X absoluta
+        self.y = 0                  #Posicion Y absoluta
         self.wid = wid              #Ancho
         self.hlw = hlw              #Altura por encima del baseline
         self.hup = hup              #Altura por debajo del baseline
@@ -142,7 +142,6 @@ class ParenthesisNode(Node):
         #Me fijo la posicion del subnodo
         snx, _ = self.subNodes[0].getPosition()
 
-        #subNodeWidth = self.getWidth() - PARENTHESIS_SPACING / scale
         #Y le resto la posicion del parentesis para saber el spacing 
         #  a la izquierda.
         #Sacandole al width total este spacing, queda la distancia al

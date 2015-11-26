@@ -152,14 +152,19 @@ def p_group(p):
 
 def p_error(p):
     if(p):
-        if(s): # Si esta seteada la variable global la uso para expresar mejor el error
+        if(s): # Si esta seteada la variable global la uso 
+               #   para expresar mejor el error
             if(len(s) > p.lineno+1):
-                error = "Error en el caracter '%s'. Contexto: '%s' '%s' '%s'" % (p.value, s[0:p.lineno], s[p.lineno], s[p.lineno+1:])
+                error = "Error en el caracter '%s'. Contexto: '%s' '%s' '%s'" \
+                    % (p.value, s[0:p.lineno], s[p.lineno], s[p.lineno+1:])
             else:
-                error = "Error en el caracter '%s'. Contexto: '%s'" % (p.value, s[0:p.lineno])
+                error = "Error en el caracter '%s'. Contexto: '%s'" \
+                    % (p.value, s[0:p.lineno])
         else:
-            error = "Error en el caracter '%s' en la posicion %d." % (p.value, p.lineno)
-    else: # en algunos casos p no viene definido y no hay mucha mas informacion para mostrar
+            error = "Error en el caracter '%s' en la posicion %d." \
+                % (p.value, p.lineno)
+    else: # en algunos casos p no viene definido y no hay mucha mas 
+          #  informacion para mostrar
         error = "Error de sintaxis."
     raise SyntaxError(error)
 
@@ -182,7 +187,9 @@ def test():
     assert test_accept('(10+5/2)')
     assert test_accept('1_2^{3_4^{5_6^7}}')
     assert test_accept('(A^BC^D/E^F_G+H)-I')
-    assert test_accept('A+(B){G^{(F^e_E/(2))}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-{(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}')
+    assert test_accept('A+(B){G^{(F^e_E/(2))}-\
+        (Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-\
+        {(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}')
     
     assert test_not_accept('1^2^3')
     assert test_not_accept('1_2_3')
@@ -221,7 +228,9 @@ def test_accept(test):
 		return False
 	return True
 
-s = None # Setea la variable global para poder mostrar mas informacion del error de parseo
+# Setea la variable global para poder mostrar 
+#   mas informacion del error de parseo
+s = None
 test()
 
 
@@ -235,8 +244,10 @@ test()
 
 # Parseo de la entrada
 parser = argparse.ArgumentParser(description='Conversor de formulas a SVG.')
-parser.add_argument('--formula', type=str, help='Formula en formato pseudo latex')
-parser.add_argument('--output', type=str, help='nombre del archivo donde se guardara el resultado')
+parser.add_argument('--formula', type=str, \
+    help='Formula en formato pseudo latex')
+parser.add_argument('--output', type=str, \
+    help='nombre del archivo donde se guardara el resultado')
 args = parser.parse_args()
 
 if(args.formula):
