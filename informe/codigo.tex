@@ -1,0 +1,497 @@
+\section{Código}
+
+En \textbf{main.py} usando \textit{ply} tenemos definidos el \textit{lexer} y el \textit{parser}, mientras que en \textbf{Node.py} está la implementación de un árbol que se va generando a media que se parsea la cadena de entrada.
+
+\newpage
+\textbf{main.py:}
+\begin{verbatim}
+
+import argparse
+
+from Node import MainNode
+from Node import DivideNode
+from Node import ConcatNode
+from Node import SuperIndexNode
+from Node import SubIndexNode
+from Node import SuperSubIndexNode
+from Node import CharacterNode
+from Node import ParenthesisNode
+
+tokens = (
+    'SUB',
+    'SUPER',
+    'DIVIDE',
+    'LPAREN',
+    'RPAREN',
+    'LLLAVE',
+    'RLLAVE',
+    'CARACTERES'
+)
+# Tokens
+
+t_SUB   = r'_'
+t_SUPER   = r'\^'
+t_DIVIDE  = r'/'
+t_LPAREN  = r'\('
+t_RPAREN  = r'\)'
+t_LLLAVE  = r'\{'
+t_RLLAVE  = r'\}'
+t_CARACTERES = r'[^_\^/\(\)\{\}]'
+
+
+
+# Ignored characters
+t_ignore = " \t"
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += t.value.count("\n")
+
+def t_error(t):
+    print("Illegal character '%s'" % t.value[0])
+    t.lexer.skip(1)
+
+# Build the lexer
+import ply.lex as lex
+lex.lex()
+
+
+
+precedence = (
+    ('left','SUB','SUPER'),
+    ('left','DIVIDE'),
+)
+
+
+# S -> E
+def p_statement_expression(p):
+    'statement : expression'
+    p[0] = MainNode(p[1]).toSvg()
+
+# E -> E / CONCAT
+def p_expression_divide(p):
+    'expression : expression DIVIDE concat'
+    p[0] = DivideNode(p[1], p[3])
+
+# E -> CONCAT
+def p_expression_concat(p):
+    'expression : concat'
+    p[0] = p[1]
+
+# CONCAT -> CONCAT ELEMENTS
+def p_concat_concat(p):
+    'concat : concat elements'
+    p[0] = ConcatNode(p[1], p[2])
+
+# CONCAT -> ELEMENTS
+def p_concat_elements(p):
+    'concat : elements'
+    p[0] = p[1]
+
+# ELEMENTS -> INDEXES
+def p_elements_indexes(p):
+    'elements : indexes'
+    p[0] = p[1]
+
+# ELEMENTS -> NOINDEX
+def p_elements_noindex(p):
+    'elements : noindex'
+    p[0] = p[1]
+
+# SUPER -> NOINDEX^NOINDEX
+def p_super(p):
+    'super : noindex SUPER noindex'
+    p[0] = SuperIndexNode(p[1], p[3])
+
+# SUB -> NOINDEX_NOINDEX
+def p_sub(p):
+    'sub : noindex SUB noindex'
+    p[0] = SubIndexNode(p[1], p[3])
+
+# SUPSUB -> NOINDEX^NOINDEX_NOINDEX
+def p_superindex_subindex(p):
+    'supsub : noindex SUPER noindex SUB noindex'
+    p[0] = SuperSubIndexNode(p[1], p[3], p[5])
+
+# SUBSUP -> NOINDEX_NOINDEX^NOINDEX
+def p_subindex_superindex(p):
+    'subsup : noindex SUB noindex SUPER noindex'
+    p[0] = SuperSubIndexNode(p[1], p[5], p[3])
+
+# INDEXES -> SUPER | SUB | SUPSUB | SUBSUP
+def p_indexes(p):
+    '''indexes : super
+               | sub
+               | supsub
+               | subsup'''
+    p[0] = p[1]
+
+#NOINDEX -> PAR | GROUP | ID
+def p_noindex(p):
+    '''noindex : parenthesis
+               | group
+               | id'''
+    p[0] = p[1]
+
+# ID -> l
+def p_id(p):
+    'id : CARACTERES'
+    p[0] = CharacterNode(p[1])
+
+# PAR -> (E)
+def p_parenthesis(p):
+    'parenthesis : LPAREN expression RPAREN'
+    p[0] = ParenthesisNode(p[2])
+
+# GROUP -> {E}
+def p_group(p):
+    'group : LLLAVE expression RLLAVE'
+    p[0] = p[2]
+
+def p_error(p):
+    if(p):
+        if(s): # Si esta seteada la variable global la uso para expresar mejor el error
+            if(len(s) > p.lineno+1):
+                error = "Error en el caracter '%s'. Contexto: '%s' '%s' '%s'" % 
+                		(p.value, s[0:p.lineno], s[p.lineno], s[p.lineno+1:])
+            else:
+                error = "Error en el caracter '%s'. Contexto: '%s'" % (p.value, s[0:p.lineno])
+        else:
+            error = "Error en el caracter '%s' en la posicion %d." % (p.value, p.lineno)
+    else: # en algunos casos p no viene definido y no hay mucha mas informacion para mostrar
+        error = "Error de sintaxis."
+    raise SyntaxError(error)
+
+import ply.yacc as yacc
+yacc.yacc()
+
+def test():
+    # Casos que tiene que tiene que reconocer
+    assert test_accpet('(a_5-c/b-1)-c')
+    assert test_accpet('{a^5-c/b}-c')
+    assert test_accpet('{a^{5^6}-c_{{k^9}}/b_i}-c')
+    assert test_accpet('(10+5/2)')
+    assert test_accpet('1_2^{3_4^{5_6^7}}')
+    assert test_accpet('(A^BC^D/E^F_G+H)-I')
+    assert test_accpet('A+(B){G^{(F^e_E/(2))}-(Q_{E_{{5}+E_{E_{E_D}}}}-Y)+X^K_J/Y}-
+    					{(80)/(2)}-{C^{G^{G^{G}}}/5}/({8+4+7}+5/ee)^{-i}')
+    assert test_not_accept('1^2^3')
+    assert test_not_accept('1_2_3')
+    assert test_not_accept('_')
+    assert test_not_accept('_1')
+    assert test_not_accept('^')
+    assert test_not_accept('^1')
+    assert test_not_accept('1_')
+    assert test_not_accept('1/')
+    assert test_not_accept('1/^')
+    assert test_not_accept('{1+2')
+    assert test_not_accept('1+2}')
+    assert test_not_accept('(1+2')
+    assert test_not_accept('3(1+2')
+    assert test_not_accept('1+2)')
+    assert test_not_accept('()')
+    assert test_not_accept('())')
+    assert test_not_accept('{{1}')
+		
+def test_not_accept(s):
+    success = True
+    try:
+        s = yacc.parse(s)
+        success = False # Si no falla paso por aca
+    except SyntaxError:
+        pass
+    return success
+
+
+# Si no pincha es porque se parseo correctamente
+def test_accpet(s):
+    yacc.parse(s)
+    return True
+
+s = None # Setea la variable global para poder mostrar mas informacion del error de parseo
+test()
+
+# Parseo de la entrada
+parser = argparse.ArgumentParser(description='Conversor de formulas a SVG.')
+parser.add_argument('--formula', type=str, help='Formula en formato pseudo latex')
+parser.add_argument('--output', type=str, help='nombre del archivo donde se guardara 
+					el resultado')
+args = parser.parse_args()
+if(args.formula):
+    s = args.formula
+else:
+    try:
+        s = raw_input('Formula :> ')
+    except EOFError:
+        pass
+try:
+    bald = yacc.parse(s)
+except SyntaxError as e:
+    print(e) # Si hay un error de parseo lo muestro por pantalla y termino
+    raise SystemExit
+
+if(args.output):
+    with open(args.output, 'w') as f:
+    	f.write(bald)
+else:
+    print(bald)
+\end{verbatim}
+
+\newpage
+
+\textbf{Node.py:}
+\begin{verbatim}
+ONT_SIZE = 48
+CHAR_WIDTH = .6 * FONT_SIZE
+CHAR_HEIGHT = 1.0 * FONT_SIZE
+CHAR_UPPER_HEIGHT = .8 * FONT_SIZE
+CHAR_LOWER_HEIGHT = .2 * FONT_SIZE
+PARENTHESIS_SPACING = .5 * FONT_SIZE
+LINE_SPACING = .1 * FONT_SIZE
+SUPER_SPACING = -0.5 * CHAR_UPPER_HEIGHT
+SUB_SPACING = -0.5 * CHAR_UPPER_HEIGHT
+
+class Node(object):
+    def __init__(self, wid, hlw, hup):
+        self.x = 0
+        self.y = 0
+        self.wid = wid
+        self.hlw = hlw
+        self.hup = hup
+        self.scale = FONT_SIZE
+        self.subNodes = []
+
+    def getPosition(self):
+        return (self.x, self.y)
+
+    def getHeights(self):
+        return (self.hlw, self.hup)
+
+    def getLowerHeight(self):
+        return self.hlw
+
+    def getUpperHeight(self):
+        return self.hup
+
+    def getHeight(self):
+        return self.hup + self.hlw
+
+    def getWidth(self):
+        return self.wid
+
+    def getScale(self):
+        return self.scale
+
+    def setPosition(self, position):
+        nx, ny = position
+        dx = nx - self.x
+        dy = ny - self.y
+        self.movePosition(dx, dy)
+
+    def scaleBy(self, scale):
+        self.scale *= scale
+        self.x *= scale
+        self.y *= scale
+        self.wid *= scale
+        self.hup *= scale
+        self.hlw *= scale
+        for node in self.subNodes:
+            node.scaleBy(scale)
+
+    def movePosition(self, x, y):
+        self.x += x
+        self.y += y
+        for node in self.subNodes:
+            node.movePosition(x, y)
+
+    def addNode(self, node):
+        self.subNodes.append(node)
+
+    def toSvg(self):
+        return "".join([node.toSvg() for node in self.subNodes])
+
+class MainNode(Node):
+    def __init__(self, node):
+        wid = node.getWidth()
+        hlow, hupp = node.getHeights()
+        super(MainNode, self).__init__(wid, hlow, hupp)
+        self.addNode(node)
+
+    def toSvg(self):
+        return '''<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+<g transform="translate(10, %.2f) " font-family="Courier">\n''' % (10+ self.hup - self.y) + \
+            super(MainNode, self).toSvg() + \
+            '''</g></svg>'''
+
+class CharacterNode(Node):
+    def __init__(self, char):
+        super(CharacterNode, self).__init__(CHAR_WIDTH, CHAR_LOWER_HEIGHT, CHAR_UPPER_HEIGHT)
+        self.char = char
+
+    def toSvg(self):
+        x, y = self.getPosition()
+        return "<text x='%.2f' y='%.2f' font-size='%.2f'>%s</text>\n" 
+        		% (x, y, self.scale, self.char)
+
+class ConcatNode(Node):
+    def __init__(self, nodeA, nodeB):
+        wid = nodeA.getWidth() + nodeB.getWidth()
+        hlowA, huppA = nodeA.getHeights()
+        hlowB, huppB = nodeB.getHeights()
+
+        super(ConcatNode, self).__init__(wid, max(hlowA, hlowB), max(huppA, huppB))
+        self.setPosition(nodeA.getPosition())   #Mueve el nodo
+        self.addNode(nodeA)                     #Agrega el 1er nodo
+        self.addNode(nodeB)                     #Agrega el 2do nodo
+
+        nodeB.setPosition(nodeA.getPosition())  #Mueve el nodo y B a la pos. de A
+        nodeB.movePosition(nodeA.getWidth(), 0) #Desplaza B.x por A.width()
+
+class ParenthesisNode(Node):
+    def __init__(self, subNode):
+        wid = subNode.getWidth() + PARENTHESIS_SPACING * 2
+        hlow, hupp = subNode.getHeights()
+
+        super(ParenthesisNode, self).__init__(wid, hlow, hupp)
+        self.setPosition(subNode.getPosition())
+        subNode.movePosition(PARENTHESIS_SPACING, 0)
+        self.addNode(subNode)
+
+    def toSvg(self):
+        x, y = self.getPosition()
+        scale = self.getScale()
+        height = self.getHeight() / .74
+        subNodeWidth = self.getWidth() - PARENTHESIS_SPACING
+
+        y += self.getLowerHeight()
+        y -= (0.12 * FONT_SIZE) * height / scale
+
+        parStr = "<text x='0' y='0' font-size='%.2f' transform='translate(%.2f, %.2f) 
+        		 scale(1, %.2f)'>%s</text>\n"
+        lPar = parStr % (scale, x, y, height / scale, '(')
+        rPar = parStr % (scale, x + subNodeWidth, y, height / scale, ')')
+
+        return lPar + super(ParenthesisNode, self).toSvg() + rPar
+
+class SubIndexNode(Node):
+    def __init__(self, rootNode, indexNode):
+        indexNode.scaleBy(0.7)
+
+        wid = rootNode.getWidth() + indexNode.getWidth()
+        hlow, hupp = rootNode.getHeights()
+
+        hlow += indexNode.getHeight() + SUB_SPACING
+        super(SubIndexNode, self).__init__(wid, hlow, hupp)
+
+
+        #Mueve el nodo Index a la derecha y un poco mas abajo que Root
+        indexNode.movePosition(rootNode.getWidth(), indexNode.getUpperHeight() + 
+        			rootNode.getLowerHeight() + SUB_SPACING)
+        #Agrega el nodo Index
+        self.addNode(indexNode)
+        #Setea el nodo en la posicion de Root                             
+        self.setPosition(rootNode.getPosition())
+        #Agrega el nodo Root            
+        self.addNode(rootNode)                              
+
+class SuperIndexNode(Node):
+    def __init__(self, rootNode, indexNode):
+        indexNode.scaleBy(0.7)
+
+        wid = rootNode.getWidth() + indexNode.getWidth()
+        hlow, hupp = rootNode.getHeights()
+
+        hupp += indexNode.getHeight() + SUPER_SPACING
+        super(SuperIndexNode, self).__init__(wid, hlow, hupp)
+        
+        #Mueve el nodo Index a la derecha y un poco mas arriba que Root
+        indexNode.movePosition(rootNode.getWidth(), -indexNode.getLowerHeight() - 
+                  rootNode.getUpperHeight() - SUPER_SPACING)
+        #Agrega el nodo Index
+        self.addNode(indexNode)
+        #Setea el nodo en la posicion de Root                             
+        self.setPosition(rootNode.getPosition())
+        #Agrega el nodo Root            
+        self.addNode(rootNode)                              
+
+class SuperSubIndexNode(Node):
+    def __init__(self, rootNode, superNode, subNode):
+        superNode.scaleBy(0.7)
+        subNode.scaleBy(0.7)
+
+        wid = rootNode.getWidth() + max(superNode.getWidth(), subNode.getWidth())
+        hlow, hupp = rootNode.getHeights()
+        hlow += subNode.getHeight() + SUB_SPACING
+        hupp += superNode.getHeight() + SUPER_SPACING
+        super(SuperSubIndexNode, self).__init__(wid, hlow, hupp)
+
+        #Mueve el Sub a la derecha y abajo del Root
+        subNode.movePosition(rootNode.getWidth(), subNode.getUpperHeight() + 
+                rootNode.getLowerHeight() + SUB_SPACING)
+        
+        #Mueve el Super a la derecha y arriba del Root
+        superNode.movePosition(rootNode.getWidth(), -superNode.getLowerHeight() - 
+                  rootNode.getUpperHeight() - SUPER_SPACING)
+
+		#Agrega el nodo Sub
+        self.addNode(subNode)
+        #Agrega el nodo Super                               
+        self.addNode(superNode)
+        #Setea el nodo en la posicion de Root                             
+        self.setPosition(rootNode.getPosition())            
+        self.addNode(rootNode)  
+
+class DivideNode(Node):
+    def __init__(self, upperNode, lowerNode):
+        uwid = upperNode.getWidth()
+        lwid = lowerNode.getWidth()
+        if uwid > lwid:
+            wid = uwid
+        else:
+            wid = lwid
+        hlow = lowerNode.getHeight() + CHAR_HEIGHT * 0.28
+        hupp = upperNode.getHeight() + CHAR_HEIGHT * 0.4
+
+        lineNode = LineNode(wid)
+
+
+        super(DivideNode, self).__init__(wid, hlow, hupp)
+        #Mueve el Nodo a la posicion de Upper
+        self.setPosition(upperNode.getPosition())               
+        self.addNode(upperNode)
+        self.addNode(lineNode)
+        self.addNode(lowerNode)
+
+		#Mueve la linea al Baseline
+        lineNode.setPosition(upperNode.getPosition())
+        #Mueve la linea un poco arriba para que quede alineada con los '-''               
+        lineNode.movePosition(0, -.28*CHAR_HEIGHT)
+        #Mueve Lower al Baseline                  
+        lowerNode.setPosition(upperNode.getPosition())
+        #Mueve Lower por debajo de la linea              
+        lowerNode.movePosition(0, lowerNode.getUpperHeight())
+        #Mueve Upper por encima de la linea       
+        upperNode.movePosition(0, -upperNode.getLowerHeight() -.4*CHAR_HEIGHT) 
+
+        if uwid > lwid:
+            lowerNode.movePosition((uwid - lwid) / 2, 0)
+        else:
+            upperNode.movePosition((lwid - uwid) / 2, 0)
+
+
+class LineNode(Node):
+    def __init__(self, wid):
+        super(LineNode, self).__init__(wid, LINE_SPACING, LINE_SPACING)
+
+    def toSvg(self):
+        x, y = self.getPosition()
+        wid = self.getWidth()
+        lineStr = "<line x1='%.2f' y1='%.2f' x2='%.2f' y2='%.2f' stroke-width='%.3f' 
+        		   stroke='black' />\n"
+        stroke = 0.03 * self.scale
+        return (lineStr % (x, y, x + wid, y, stroke)) + super(LineNode, self).toSvg()
+\end{verbatim}
+
